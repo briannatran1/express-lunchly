@@ -4,7 +4,7 @@
 
 const express = require("express");
 
-const { BadRequestError } = require("./expressError");
+const { BadRequestError, NotFoundError } = require("./expressError");
 const Customer = require("./models/customer");
 const Reservation = require("./models/reservation");
 
@@ -34,6 +34,24 @@ router.post("/add/", async function (req, res, next) {
   await customer.save();
 
   return res.redirect(`/${customer.id}/`);
+});
+
+/** Return searched customer */
+
+router.get("/cat", async function (req, res, next) {
+  const searched = req.query.search;
+
+  if(!searched){
+    throw new NotFoundError("Customer not found")
+  }else{
+    const customers = await Customer
+      .all();
+    const matchedCustomers = customers
+      .filter(customer => customer.firstName.startsWith(searched));
+      console.log(matchedCustomers, "matchedCustomers")
+      
+    return res.render("customer_searched_list.html", { matchedCustomers })
+  }
 });
 
 /** Show a customer, given their ID. */
@@ -91,5 +109,7 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
 
   return res.redirect(`/${customerId}/`);
 });
+
+
 
 module.exports = router;
