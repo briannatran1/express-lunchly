@@ -15,7 +15,7 @@ const router = new express.Router();
 
 router.get("/", async function (req, res, next) {
   const searched = req.query.search;
-
+//TODO: notcase insensitive, wont scale well <- SQL query, should be in model
   if (searched) {
     const allCustomers = await Customer
       .all();
@@ -97,6 +97,7 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
   if (req.body === undefined) {
     throw new BadRequestError();
   }
+  //TODO: if body data is invalid
   const customerId = req.params.id;
   const startAt = new Date(req.body.startAt);
   const numGuests = req.body.numGuests;

@@ -98,7 +98,7 @@ class Customer {
   }
 
   /** returns top 10 customers with the most reservations */
-
+//TODO: getTopTen, consider resuable method to limit by any number
   static async topTen() {
     const bestCustomers = await db.query(
       `SELECT customers.id,
