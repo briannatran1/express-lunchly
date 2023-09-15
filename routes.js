@@ -10,11 +10,24 @@ const Reservation = require("./models/reservation");
 
 const router = new express.Router();
 
-/** Homepage: show list of customers. */
+/** Homepage: show list of customers.
+ *  Searching for a customer will return searched customer */
 
 router.get("/", async function (req, res, next) {
-  const customers = await Customer.all();
-  return res.render("customer_list.html", { customers });
+  const searched = req.query.search;
+
+  if (searched) {
+    const allCustomers = await Customer
+      .all();
+    const matchedCustomers = allCustomers
+      .filter(customer => customer.firstName.startsWith(searched));
+
+    return res.render("customer_searched_list.html", { matchedCustomers });
+  }
+  else {
+    const customers = await Customer.all();
+    return res.render("customer_list.html", { customers });
+  }
 });
 
 /** Form to add a new customer. */
@@ -34,24 +47,6 @@ router.post("/add/", async function (req, res, next) {
   await customer.save();
 
   return res.redirect(`/${customer.id}/`);
-});
-
-/** Return searched customer */
-
-router.get("/cat", async function (req, res, next) {
-  const searched = req.query.search;
-
-  if(!searched){
-    throw new NotFoundError("Customer not found")
-  }else{
-    const customers = await Customer
-      .all();
-    const matchedCustomers = customers
-      .filter(customer => customer.firstName.startsWith(searched));
-      console.log(matchedCustomers, "matchedCustomers")
-      
-    return res.render("customer_searched_list.html", { matchedCustomers })
-  }
 });
 
 /** Show a customer, given their ID. */
