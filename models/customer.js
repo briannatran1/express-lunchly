@@ -100,19 +100,21 @@ class Customer {
   /** return top 10 customers with the most reservations */
 
   static async topTen() {
-    //get all the customers with .all()
-    //returns instances of all customers
-    //look through this for
-    const allCustomers = await Customer.all();
-    const allReservations = await db.query(`
-      SELECT id, COUNT(customer_id) AS num_reservations
-      FROM reservations
-      WHERE customer_id = $1
-      ORDER BY num_reservations DESC`,
-      [id]
-      )
-    console.log(allReservations)
+    //use join to utilize relationships
+    const bestCustomers = await db.query(
+      `SELECT first_name, last_name, COUNT(customer_id)
+        FROM customers
+        JOIN reservations
+        ON customers.id = reservations.customer_id
+        GROUP BY first_name, last_name
+        ORDER BY count DESC
+        LIMIT 10
+        `
+    );
+
+    return bestCustomers.rows.map(customer => new Customer(customer));
   }
 }
 
 module.exports = Customer;
+
