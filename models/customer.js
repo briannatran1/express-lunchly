@@ -98,8 +98,8 @@ class Customer {
   }
 
   /** returns top 10 customers with the most reservations */
-//TODO: getTopTen, consider resuable method to limit by any number
-  static async topTen() {
+  //TODO: getTopTen, consider resuable method to limit by any number
+  static async getTopTen() {
     const bestCustomers = await db.query(
       `SELECT customers.id,
           first_name AS "firstName",
@@ -115,6 +115,19 @@ class Customer {
     );
 
     return bestCustomers.rows.map(customer => new Customer(customer));
+  }
+
+  /** queries db for customers that match our search input */
+
+  static async findMatchingCustomers(search) {
+    const matchingCustomers = await db.query(
+      `SELECT id, first_name AS "firstName", last_name AS "lastName"
+        FROM customers
+        WHERE CONCAT(first_name, ' ', last_name) ILIKE $1`,
+      [`%${search}%`]
+    );
+
+    return matchingCustomers.rows.map(customer => new Customer(customer));
   }
 }
 
