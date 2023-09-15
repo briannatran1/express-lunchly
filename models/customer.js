@@ -96,6 +96,23 @@ class Customer {
   fullName() {
     return `${this.firstName} ${this.lastName}`;
   }
+
+  /** return top 10 customers with the most reservations */
+
+  static async topTen() {
+    //get all the customers with .all()
+    //returns instances of all customers
+    //look through this for
+    const allCustomers = await Customer.all();
+    const allReservations = await db.query(`
+      SELECT id, COUNT(customer_id) AS num_reservations
+      FROM reservations
+      WHERE customer_id = $1
+      ORDER BY num_reservations DESC`,
+      [id]
+      )
+    console.log(allReservations)
+  }
 }
 
 module.exports = Customer;
