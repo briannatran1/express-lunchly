@@ -51,10 +51,11 @@ router.post("/add/", async function (req, res, next) {
 
 /** Top ten customers */
 
-router.get("/best", async function (req, res){
-  const topTen = Customer.topTen()
-  console.log(topTen)
-})
+router.get("/best", async function (req, res) {
+  const topTen = await Customer.topTen();
+  console.log(topTen);
+});
+
 /** Show a customer, given their ID. */
 
 router.get("/:id/", async function (req, res, next) {
