@@ -97,16 +97,18 @@ class Customer {
     return `${this.firstName} ${this.lastName}`;
   }
 
-  /** return top 10 customers with the most reservations */
+  /** returns top 10 customers with the most reservations */
 
   static async topTen() {
-    //use join to utilize relationships
     const bestCustomers = await db.query(
-      `SELECT first_name, last_name, COUNT(customer_id)
+      `SELECT customers.id,
+          first_name AS "firstName",
+          last_name AS "lastName",
+          COUNT(customer_id)
         FROM customers
         JOIN reservations
         ON customers.id = reservations.customer_id
-        GROUP BY first_name, last_name
+        GROUP BY first_name, last_name, customers.id
         ORDER BY count DESC
         LIMIT 10
         `

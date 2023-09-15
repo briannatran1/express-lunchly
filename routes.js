@@ -49,11 +49,12 @@ router.post("/add/", async function (req, res, next) {
   return res.redirect(`/${customer.id}/`);
 });
 
-/** Top ten customers */
+/** Display top ten customers */
 
-router.get("/best", async function (req, res) {
+router.get("/top-ten", async function (req, res) {
   const topTen = await Customer.topTen();
-  console.log(topTen);
+  // const ten = topTen.map(customer => customer.fullName() )
+  return res.render("customer_top_ten.html", { topTen });
 });
 
 /** Show a customer, given their ID. */
@@ -111,7 +112,5 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
 
   return res.redirect(`/${customerId}/`);
 });
-
-
 
 module.exports = router;
