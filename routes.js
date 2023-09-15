@@ -15,12 +15,15 @@ const router = new express.Router();
 
 router.get("/", async function (req, res, next) {
   const searched = req.query.search;
-//TODO: notcase insensitive, wont scale well <- SQL query, should be in model
+
   if (searched) {
-    const allCustomers = await Customer
-      .all();
-    const matchedCustomers = allCustomers
-      .filter(customer => customer.firstName.startsWith(searched));
+    const matchedCustomers = await Customer.findMatchingCustomers(searched);
+    // less efficient
+    //
+    // const allCustomers = await Customer
+    //   .all();
+    // const matchedCustomers = allCustomers
+    //   .filter(customer => customer.firstName.startsWith(searched));
 
     return res.render("customer_searched_list.html", { matchedCustomers });
   }
@@ -52,8 +55,8 @@ router.post("/add/", async function (req, res, next) {
 /** Display top ten customers */
 
 router.get("/top-ten", async function (req, res) {
-  const topTen = await Customer.topTen();
-  // const ten = topTen.map(customer => customer.fullName() )
+  const topTen = await Customer.getTopTenTen();
+
   return res.render("customer_top_ten.html", { topTen });
 });
 
